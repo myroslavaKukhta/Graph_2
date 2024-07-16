@@ -1,34 +1,44 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import {
+    setGraphName,
+    createNewGraph,
+    resetGraph,
+    saveGraph,
+    toggleSidebar,
+    toggleShowMatrix,
+} from '../redux/graphSlice';
+import styles from './Header.module.css';
 
-interface HeaderProps {
-    graphName: string;
-    setGraphName: (name: string) => void;
-    createNewGraph: () => void;
-    resetGraph: () => void;
-    saveGraph: () => void;
-    toggleSidebar: () => void;
-    toggleShowMatrix: () => void;
-    showMatrix: boolean;
-}
+const Header: React.FC = () => {
+    const dispatch = useDispatch();
+    const graphName = useSelector((state: RootState) => state.graph.graphName);
 
-const Header: React.FC<HeaderProps> = ({ graphName, setGraphName, createNewGraph, resetGraph, saveGraph, toggleSidebar, toggleShowMatrix, showMatrix }) => {
     return (
-        <header className="header">
-            <div className="header-controls">
-                <label>
-                    Назва графа:
-                    <input type="text" value={graphName} onChange={(e) => setGraphName(e.target.value)} />
-                </label>
-                <button onClick={createNewGraph}>Новий граф</button>
-                <button onClick={resetGraph}>Скинути граф</button>
-                <button onClick={saveGraph}>Зберегти граф</button>
-                <button onClick={toggleShowMatrix}>{showMatrix ? 'Сховати матрицю' : 'Показати матрицю'}</button>
-                <button onClick={toggleSidebar}>☰</button>
+        <div className={styles.header}>
+            <div className={styles['header-controls']}>
+                <input
+                    type="text"
+                    value={graphName}
+                    onChange={(e) => dispatch(setGraphName(e.target.value))}
+                    placeholder="Назва графа"
+                />
+                <button onClick={() => dispatch(createNewGraph())}>Новий граф</button>
+                <button onClick={() => dispatch(resetGraph())}>Скинути граф</button>
+                <button onClick={() => dispatch(saveGraph())}>Зберегти граф</button>
+                <button onClick={() => dispatch(toggleShowMatrix())}>Показати матрицю</button>
+                <button onClick={() => dispatch(toggleSidebar())}>Меню</button>
             </div>
-        </header>
+        </div>
     );
 };
 
 export default Header;
+
+
+
+
+
 
 

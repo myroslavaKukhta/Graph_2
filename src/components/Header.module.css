@@ -1,0 +1,27 @@
+.header {
+    display: flex;
+    justify-content: center;
+    background-color: #282c34;
+    padding: 1%;
+    color: white;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 1;
+    height: 10vh;
+}
+
+.headerControls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.label {
+    margin: 0 10px;
+}
+
+.input {
+    margin-left: 5px;
+}

@@ -1,0 +1,12 @@
+.graphContainer {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(100% - 20vw); /* Adjust to sidebar width */
+    height: calc(100vh - 10vh); /* Adjust to header height */
+    margin-left: 20vw; /* Adjust to sidebar width */
+    margin-top: 10vh; /* Adjust to header height */
+    position: relative;
+    overflow: hidden;
+}

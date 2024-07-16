@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './Node.module.css';
 
 interface NodeProps {
     id: string;
@@ -11,56 +12,45 @@ interface NodeProps {
 }
 
 const Node: React.FC<NodeProps> = ({ id, cx, cy, onDrag, onMouseDown, onClick, degree }) => {
-    const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const handleMouseDown = (event: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
         onMouseDown(id);
     };
 
-    const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const handleMouseMove = (event: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
         if (event.buttons === 1) {
-            const containerRect = (event.target as HTMLDivElement).parentElement!.getBoundingClientRect();
-            const x = event.clientX - containerRect.left;
-            const y = event.clientY - containerRect.top;
+            const svgRect = (event.target as SVGCircleElement).ownerSVGElement!.getBoundingClientRect();
+            const x = event.clientX - svgRect.left;
+            const y = event.clientY - svgRect.top;
             onDrag(id, x, y);
         }
     };
 
-    const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        const containerRect = (event.target as HTMLDivElement).parentElement!.getBoundingClientRect();
-        const x = event.clientX - containerRect.left;
-        const y = event.clientY - containerRect.top;
+    const handleClick = (event: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
+        const svgRect = (event.target as SVGCircleElement).ownerSVGElement!.getBoundingClientRect();
+        const x = event.clientX - svgRect.left;
+        const y = event.clientY - svgRect.top;
         onClick(x, y);
     };
 
     return (
-        <div
-            className="node"
-            style={{
-                left: cx - 10,
-                top: cy - 10,
-            }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onClick={handleClick}
-        >
-            <div style={{ position: 'absolute', top: '25px', left: '-5px', color: 'black', fontSize: '12px' }}>d: {degree}</div>
-            <div style={{ position: 'absolute', top: '-20px', left: '5px', color: 'black', fontSize: '12px' }}>{id}</div>
-        </div>
+        <>
+            <circle
+                className={styles.node}
+                r={10}
+                cx={cx}
+                cy={cy}
+                fill="#1f77b4"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onClick={handleClick}
+            />
+            <text x={cx + 15} y={cy - 15} className={styles.text}>{id}</text>
+            <text x={cx - 5} y={cy + 25} className={styles.text}>d: {degree}</text>
+        </>
     );
 };
 
 export default Node;
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

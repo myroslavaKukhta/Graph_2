@@ -1,0 +1,8 @@
+.node {
+    cursor: pointer;
+}
+
+.text {
+    fill: black;
+    font-size: 12px;
+}

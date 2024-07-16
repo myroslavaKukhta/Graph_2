@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './Edge.module.css';
 
 interface EdgeProps {
     index: number;
@@ -41,50 +42,39 @@ const Edge: React.FC<EdgeProps> = ({
     const loopRadius = 60;
 
     return (
-        <svg>
+        <g>
             {isLoop ? (
                 <path
-                    className="edge"
+                    className={styles.edge}
                     d={`M ${sourceX} ${sourceY} C ${sourceX + loopRadius} ${sourceY - loopRadius}, ${sourceX - loopRadius} ${sourceY - loopRadius}, ${sourceX} ${sourceY}`}
                     stroke="#999"
                     strokeWidth={2}
                     fill="none"
-                    markerEnd={directed ? "url(#arrowhead)" : ""}
+                    markerEnd={directed ? 'url(#arrowhead)' : ''}
                     onMouseDown={handleMouseDown}
                     onClick={onClick}
                     onDoubleClick={onDoubleClick}
                 />
             ) : (
                 <path
-                    className="edge"
+                    className={styles.edge}
                     d={`M ${sourceX},${sourceY} Q ${midX},${midY} ${targetX},${targetY}`}
                     stroke="#999"
                     strokeWidth={2}
                     fill="none"
-                    markerEnd={directed ? "url(#arrowhead)" : ""}
+                    markerEnd={directed ? 'url(#arrowhead)' : ''}
                     onMouseDown={handleMouseDown}
                     onClick={onClick}
                     onDoubleClick={onDoubleClick}
                 />
             )}
-            <text
-                x={midX}
-                y={midY}
-                fill="black"
-                fontSize="12"
-                cursor="pointer"
-                onClick={onToggleDirection}
-            >
+            <text x={midX} y={midY} fill="black" fontSize="12" cursor="pointer" onClick={onToggleDirection}>
                 e{index + 1}
             </text>
-        </svg>
+        </g>
     );
 };
 
 export default Edge;
-
-
-
-
 
 
