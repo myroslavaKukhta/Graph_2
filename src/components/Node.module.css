@@ -1,8 +1,16 @@
-.node {
-    cursor: pointer;
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    background-color: #333;
+    color: white;
+    padding: 10px;
 }
 
-.text {
-    fill: black;
-    font-size: 12px;
+.header input {
+    margin-right: 10px;
+}
+
+.header button {
+    margin-right: 10px;
 }

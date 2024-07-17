@@ -1,12 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Node {
     id: string;
+    label: string;
     x: number;
     y: number;
+    degree: number;
 }
 
 interface Edge {
+    id: string;
+    label: string;
     source: string;
     target: string;
     directed: boolean;
@@ -16,20 +21,23 @@ interface GraphState {
     nodes: Node[];
     edges: Edge[];
     numNodes: number;
+    numEdges: number;
     graphName: string;
     isDirected: boolean;
     selectedNode: string | null;
-    selectedEdge: number | null;
+    selectedEdge: string | null;
     showMatrix: boolean;
     sidebarOpen: boolean;
     history: any[];
     deleteMode: boolean;
+    addingEdge: boolean;
 }
 
 const initialState: GraphState = {
     nodes: [],
     edges: [],
     numNodes: 0,
+    numEdges: 0,
     graphName: '',
     isDirected: false,
     selectedNode: null,
@@ -38,17 +46,26 @@ const initialState: GraphState = {
     sidebarOpen: true,
     history: [],
     deleteMode: false,
+    addingEdge: false,
 };
 
 const graphSlice = createSlice({
     name: 'graph',
     initialState,
     reducers: {
-        addNode: (state, action: PayloadAction<Node>) => {
-            state.nodes.push(action.payload);
+        addNode: (state, action: PayloadAction<Omit<Node, 'id' | 'label' | 'degree'>>) => {
+            state.numNodes += 1;
+            const newNode: Node = { ...action.payload, id: uuidv4(), label: `v${state.numNodes}`, degree: 0 };
+            state.nodes.push(newNode);
         },
-        addEdge: (state, action: PayloadAction<Edge>) => {
-            state.edges.push(action.payload);
+        addEdge: (state, action: PayloadAction<Omit<Edge, 'id' | 'label'>>) => {
+            state.numEdges += 1;
+            const newEdge: Edge = { ...action.payload, id: uuidv4(), label: `e${state.numEdges}` };
+            const sourceNode = state.nodes.find(node => node.id === newEdge.source);
+            const targetNode = state.nodes.find(node => node.id === newEdge.target);
+            if (sourceNode) sourceNode.degree += 1;
+            if (targetNode) targetNode.degree += 1;
+            state.edges.push(newEdge);
         },
         setNodes: (state, action: PayloadAction<Node[]>) => {
             state.nodes = action.payload;
@@ -68,7 +85,7 @@ const graphSlice = createSlice({
         setSelectedNode: (state, action: PayloadAction<string | null>) => {
             state.selectedNode = action.payload;
         },
-        setSelectedEdge: (state, action: PayloadAction<number | null>) => {
+        setSelectedEdge: (state, action: PayloadAction<string | null>) => {
             state.selectedEdge = action.payload;
         },
         setShowMatrix: (state, action: PayloadAction<boolean>) => {
@@ -97,16 +114,36 @@ const graphSlice = createSlice({
             state.deleteMode = action.payload;
         },
         removeNode: (state, action: PayloadAction<string>) => {
-            state.nodes = state.nodes.filter(node => node.id !== action.payload);
-            state.edges = state.edges.filter(edge => edge.source !== action.payload && edge.target !== action.payload);
+            const nodeToRemove = state.nodes.find(node => node.id === action.payload);
+            if (nodeToRemove) {
+                state.edges = state.edges.filter(edge => {
+                    if (edge.source === nodeToRemove.id || edge.target === nodeToRemove.id) {
+                        const sourceNode = state.nodes.find(node => node.id === edge.source);
+                        const targetNode = state.nodes.find(node => node.id === edge.target);
+                        if (sourceNode) sourceNode.degree -= 1;
+                        if (targetNode) targetNode.degree -= 1;
+                        return false;
+                    }
+                    return true;
+                });
+                state.nodes = state.nodes.filter(node => node.id !== action.payload);
+            }
         },
-        removeEdge: (state, action: PayloadAction<number>) => {
-            state.edges.splice(action.payload, 1);
+        removeEdge: (state, action: PayloadAction<string>) => {
+            const edgeToRemove = state.edges.find(edge => edge.label === action.payload);
+            if (edgeToRemove) {
+                const sourceNode = state.nodes.find(node => node.id === edgeToRemove.source);
+                const targetNode = state.nodes.find(node => node.id === edgeToRemove.target);
+                if (sourceNode) sourceNode.degree -= 1;
+                if (targetNode) targetNode.degree -= 1;
+                state.edges = state.edges.filter(edge => edge.label !== action.payload);
+            }
         },
         createNewGraph: (state) => {
             state.nodes = [];
             state.edges = [];
             state.numNodes = 0;
+            state.numEdges = 0;
             state.graphName = '';
             state.isDirected = false;
             state.selectedNode = null;
@@ -115,6 +152,7 @@ const graphSlice = createSlice({
             state.sidebarOpen = true;
             state.history = [];
             state.deleteMode = false;
+            state.addingEdge = false;
         },
         resetGraph: (state) => {
             state.nodes = [];
@@ -124,6 +162,7 @@ const graphSlice = createSlice({
             state.history = [];
             state.deleteMode = false;
             state.showMatrix = false;
+            state.addingEdge = false;
         },
         saveGraph: (state) => {
             console.log("Graph saved:", state);
@@ -136,6 +175,9 @@ const graphSlice = createSlice({
         },
         toggleDeleteMode: (state) => {
             state.deleteMode = !state.deleteMode;
+        },
+        setAddingEdge: (state, action: PayloadAction<boolean>) => {
+            state.addingEdge = action.payload;
         },
     },
 });
@@ -164,9 +206,28 @@ export const {
     toggleShowMatrix,
     toggleSidebar,
     toggleDeleteMode,
+    setAddingEdge,
 } = graphSlice.actions;
 
 export default graphSlice.reducer;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

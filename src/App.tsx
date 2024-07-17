@@ -12,13 +12,16 @@ const App: React.FC = () => {
             <div className={styles.App}>
                 <Header />
                 <Sidebar />
-                <Graph />
+                <div className={styles.graphContainer}>
+                    <Graph />
+                </div>
             </div>
         </Provider>
     );
 };
 
 export default App;
+
 
 
 

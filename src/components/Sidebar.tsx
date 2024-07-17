@@ -1,78 +1,105 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
-import {
-    setNumNodes,
-    addNode,
-    removeNode,
-    addEdge,
-    removeEdge,
-    toggleDeleteMode,
-    setNodes,
-} from '../redux/graphSlice';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { addNode, removeNode, removeEdge, setDeleteMode, setAddingEdge } from '../redux/graphSlice';
 import styles from './Sidebar.module.css';
 
 const Sidebar: React.FC = () => {
     const dispatch = useDispatch();
-    const numNodes = useSelector((state: RootState) => state.graph.numNodes);
-    const nodes = useSelector((state: RootState) => state.graph.nodes);
-    const deleteMode = useSelector((state: RootState) => state.graph.deleteMode);
+    const [numNodes, setNumNodes] = useState<number>(0);
+    const [nodeIdToRemove, setNodeIdToRemove] = useState<string>("");
+    const [edgeLabelToRemove, setEdgeLabelToRemove] = useState<string>("");
+    const [isDirected, setIsDirected] = useState<boolean>(false);
 
-    useEffect(() => {
-        const newNodes = [];
+    const handleAddNodes = () => {
         for (let i = 0; i < numNodes; i++) {
-            newNodes.push({ id: `v_${i + 1}`, x: Math.random() * 400, y: Math.random() * 400 });
+            const x = Math.random() * 500;
+            const y = Math.random() * 500;
+            dispatch(addNode({ x, y }));
         }
-        dispatch(setNodes(newNodes));
-    }, [numNodes, dispatch]);
-
-    const handleAddNode = () => {
-        const newNode = { id: `v_${nodes.length + 1}`, x: Math.random() * 400, y: Math.random() * 400 };
-        dispatch(addNode(newNode));
     };
 
     const handleRemoveNode = () => {
-        if (nodes.length > 0) {
-            dispatch(removeNode(nodes[nodes.length - 1].id));
+        if (nodeIdToRemove) {
+            dispatch(removeNode(nodeIdToRemove));
         }
     };
 
     const handleAddEdge = () => {
-        if (nodes.length > 1) {
-            const source = nodes[0].id;
-            const target = nodes[1].id;
-            dispatch(addEdge({ source, target, directed: false }));
-        }
+        dispatch(setAddingEdge(true));
     };
 
     const handleRemoveEdge = () => {
-        if (nodes.length > 1) {
-            dispatch(removeEdge(nodes.length - 1));
+        if (edgeLabelToRemove) {
+            dispatch(removeEdge(edgeLabelToRemove));
         }
+    };
+
+    const handleToggleDeleteMode = () => {
+        dispatch(setDeleteMode(true));
     };
 
     return (
         <div className={styles.sidebar}>
-            <label>
-                Кількість вершин:
-                <input
-                    type="number"
-                    value={numNodes}
-                    onChange={(e) => dispatch(setNumNodes(Number(e.target.value)))}
-                />
-            </label>
-            <button onClick={handleAddNode}>Додати вершину</button>
+            <input
+                type="number"
+                value={numNodes}
+                onChange={(e) => setNumNodes(Number(e.target.value))}
+                placeholder="Кількість вершин"
+                min="0"
+            />
+            <button onClick={handleAddNodes}>Додати вершини</button>
+            <input
+                type="text"
+                value={nodeIdToRemove}
+                onChange={(e) => setNodeIdToRemove(e.target.value)}
+                placeholder="Вершина для видалення"
+            />
             <button onClick={handleRemoveNode}>Видалити вершину</button>
             <button onClick={handleAddEdge}>Додати ребро</button>
+            <input
+                type="text"
+                value={edgeLabelToRemove}
+                onChange={(e) => setEdgeLabelToRemove(e.target.value)}
+                placeholder="Назва ребра для видалення"
+            />
+            <label>
+                <input
+                    type="checkbox"
+                    checked={isDirected}
+                    onChange={() => setIsDirected(!isDirected)}
+                />
+                Орієнтоване
+            </label>
             <button onClick={handleRemoveEdge}>Видалити ребро</button>
-            <button onClick={() => dispatch(toggleDeleteMode())}>
-                {deleteMode ? 'Режим перегляду' : 'Режим видалення'}
-            </button>
         </div>
     );
 };
 
 export default Sidebar;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

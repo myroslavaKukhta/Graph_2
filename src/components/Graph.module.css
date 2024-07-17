@@ -1,12 +1,8 @@
-.graphContainer {
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: calc(100% - 20vw); /* Adjust to sidebar width */
-    height: calc(100vh - 10vh); /* Adjust to header height */
-    margin-left: 20vw; /* Adjust to sidebar width */
-    margin-top: 10vh; /* Adjust to header height */
+.graph {
+    width: calc(100% - 250px);
+    height: calc(100vh - 50px);
+    background-color: #ffffff;
     position: relative;
-    overflow: hidden;
 }
+
+

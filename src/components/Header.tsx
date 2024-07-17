@@ -1,40 +1,56 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
-import {
-    setGraphName,
-    createNewGraph,
-    resetGraph,
-    saveGraph,
-    toggleSidebar,
-    toggleShowMatrix,
-} from '../redux/graphSlice';
+import { useDispatch } from 'react-redux';
+import { setGraphName, resetGraph, toggleShowMatrix, toggleSidebar, saveGraph, createNewGraph } from '../redux/graphSlice';
 import styles from './Header.module.css';
 
 const Header: React.FC = () => {
     const dispatch = useDispatch();
-    const graphName = useSelector((state: RootState) => state.graph.graphName);
+
+    const handleCreateNewGraph = () => {
+        dispatch(createNewGraph());
+    };
+
+    const handleResetGraph = () => {
+        dispatch(resetGraph());
+    };
+
+    const handleSaveGraph = () => {
+        dispatch(saveGraph());
+    };
+
+    const handleToggleSidebar = () => {
+        dispatch(toggleSidebar());
+    };
+
+    const handleToggleShowMatrix = () => {
+        dispatch(toggleShowMatrix());
+    };
 
     return (
         <div className={styles.header}>
-            <div className={styles['header-controls']}>
-                <input
-                    type="text"
-                    value={graphName}
-                    onChange={(e) => dispatch(setGraphName(e.target.value))}
-                    placeholder="Назва графа"
-                />
-                <button onClick={() => dispatch(createNewGraph())}>Новий граф</button>
-                <button onClick={() => dispatch(resetGraph())}>Скинути граф</button>
-                <button onClick={() => dispatch(saveGraph())}>Зберегти граф</button>
-                <button onClick={() => dispatch(toggleShowMatrix())}>Показати матрицю</button>
-                <button onClick={() => dispatch(toggleSidebar())}>Меню</button>
-            </div>
+            <input
+                type="text"
+                placeholder="Назва графа"
+                onChange={(e) => dispatch(setGraphName(e.target.value))}
+            />
+            <button onClick={handleCreateNewGraph}>Новий граф</button>
+            <button onClick={handleResetGraph}>Скинути граф</button>
+            <button onClick={handleSaveGraph}>Зберегти граф</button>
+            <button onClick={handleToggleShowMatrix}>Показати матрицю</button>
+            <button onClick={handleToggleSidebar}>Меню</button>
         </div>
     );
 };
 
 export default Header;
+
+
+
+
+
+
+
+
 
 
 
