@@ -13,16 +13,16 @@
     z-index: 1000;
 }
 
-input {
+.header input {
     margin-right: 10px;
     padding: 10px;
     font-size: 16px;
-    width: 180px;
+    width: 180px; /* Вужчий інпут */
     box-sizing: border-box;
 }
 
-button {
-    margin-left: 10px;
+.header button {
+    margin: 0 5px; /* Зазори між кнопками */
     padding: 10px 20px;
     font-size: 16px;
     color: #ffffff;
@@ -31,11 +31,17 @@ button {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 150px; /* Однаковий розмір кнопок */
 }
 
-button:hover {
+.header button:hover {
     background-color: #0056b3;
 }
+
+.header button:active {
+    background-color: #004085;
+}
+
 
 button:active {
     background-color: #004085;

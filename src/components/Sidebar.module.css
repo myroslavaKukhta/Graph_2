@@ -5,11 +5,11 @@
     align-items: center;
     background-color: #f1f1f1;
     padding: 20px;
-    width: 15vw;
-    height: calc(100vh - 60px);
+    width: 20vw; /* Збільшуємо ширину сайдбару */
+    height: calc(100vh - 60px); /* Висота Header */
     position: fixed;
     left: 0;
-    top: 60px;
+    top: 60px; /* Висота Header */
     overflow-y: auto;
 }
 
@@ -23,7 +23,7 @@ input {
 
 button {
     margin: 10px 0;
-    padding: 10px 20px;
+    padding: 10px 15px; /* Вужчі кнопки */
     font-size: 16px;
     color: #ffffff;
     background-color: #007bff;
@@ -31,6 +31,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 100%; /* Однаковий розмір кнопок */
 }
 
 button:hover {
@@ -44,6 +45,7 @@ button:active {
 label {
     margin: 10px 0;
 }
+
 
 
 

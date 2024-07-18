@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { setNodes, setEdges, addNode, addEdge, removeNode, removeEdge } from '../redux/graphSlice';
+import { setNodes, setEdges, addNode, addEdge, removeNode, removeEdge, setAddingEdge, setDeleteMode } from '../redux/graphSlice';
 import styles from './Graph.module.css';
 import Matrix from './Matrix';
 
@@ -12,6 +12,7 @@ const Graph: React.FC = () => {
     const showMatrix = useSelector((state: RootState) => state.graph.showMatrix);
     const deleteMode = useSelector((state: RootState) => state.graph.deleteMode);
     const addingEdge = useSelector((state: RootState) => state.graph.addingEdge);
+    const isDirected = useSelector((state: RootState) => state.graph.isDirected);
     const [edgeSource, setEdgeSource] = useState<string | null>(null);
     const [draggingNode, setDraggingNode] = useState<string | null>(null);
     const [position, setPosition] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
@@ -36,9 +37,10 @@ const Graph: React.FC = () => {
                 const nodeId = target.getAttribute('id');
                 const node = nodes.find(n => n.id === nodeId);
                 if (nodeId && edgeSource) {
-                    dispatch(addEdge({ source: edgeSource, target: nodeId, directed: false }));
+                    dispatch(addEdge({ source: edgeSource, target: nodeId, directed: isDirected }));
                     setEdgeSource(null);
                     setTempEdge(null);
+                    dispatch(setAddingEdge(false)); // Вимкнути режим додавання ребра
                 } else if (nodeId && node) {
                     setEdgeSource(nodeId);
                     setTempEdge({ x1: node.x, y1: node.y, x2: node.x, y2: node.y });
@@ -77,26 +79,54 @@ const Graph: React.FC = () => {
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
         };
-    }, [deleteMode, addingEdge, edgeSource, draggingNode, position, nodes, dispatch, tempEdge]);
+    }, [deleteMode, addingEdge, edgeSource, draggingNode, position, nodes, dispatch, isDirected, tempEdge]);
+
+    const handleLineClick = (event: React.MouseEvent<SVGLineElement, MouseEvent>) => {
+        if (deleteMode) {
+            const edgeId = event.currentTarget.getAttribute('id');
+            if (edgeId) {
+                dispatch(removeEdge(edgeId));
+            }
+        }
+    };
 
     return (
         <div className={styles.graphContainer}>
             <svg className={styles.graph}>
+                <defs>
+                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L10,5 L0,10 z" fill="#000" />
+                    </marker>
+                </defs>
                 {edges.map(edge => {
                     const sourceNode = nodes.find(node => node.id === edge.source);
                     const targetNode = nodes.find(node => node.id === edge.target);
                     if (!sourceNode || !targetNode) return null;
+                    const isLoop = sourceNode.id === targetNode.id;
                     return (
                         <g key={edge.id}>
-                            <line
-                                id={edge.id}
-                                x1={sourceNode.x}
-                                y1={sourceNode.y}
-                                x2={targetNode.x}
-                                y2={targetNode.y}
-                                stroke="black"
-                                markerEnd={edge.directed ? "url(#arrow)" : ""}
-                            />
+                            {isLoop ? (
+                                <path
+                                    d={`M ${sourceNode.x} ${sourceNode.y} C ${sourceNode.x - 20} ${sourceNode.y - 20}, ${sourceNode.x + 20} ${sourceNode.y - 20}, ${sourceNode.x} ${sourceNode.y}`}
+                                    stroke="black"
+                                    fill="transparent"
+                                    markerEnd={edge.directed ? "url(#arrow)" : ""}
+                                    strokeWidth="2"
+                                    onClick={handleLineClick}
+                                />
+                            ) : (
+                                <line
+                                    id={edge.id}
+                                    x1={sourceNode.x}
+                                    y1={sourceNode.y}
+                                    x2={targetNode.x}
+                                    y2={targetNode.y}
+                                    stroke="black"
+                                    strokeWidth="2"
+                                    markerEnd={edge.directed ? "url(#arrow)" : ""}
+                                    onClick={handleLineClick}
+                                />
+                            )}
                             <text
                                 x={(sourceNode.x + targetNode.x) / 2}
                                 y={(sourceNode.y + targetNode.y) / 2}
@@ -126,16 +156,12 @@ const Graph: React.FC = () => {
                             cy={node.y}
                             r={10}
                             fill="black"
+                            onMouseDown={() => setDraggingNode(node.id)}
                         />
                         <text x={node.x + 12} y={node.y + 4} fontSize="12" fill="black">{node.label}</text>
                         <text x={node.x - 12} y={node.y + 20} fontSize="12" fill="red">d: {node.degree}</text>
                     </g>
                 ))}
-                <defs>
-                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
-                        <path d="M0,0 L0,6 L9,3 z" fill="#000" />
-                    </marker>
-                </defs>
             </svg>
             {showMatrix && (
                 <div className={styles.matrixContainer}>
@@ -147,6 +173,12 @@ const Graph: React.FC = () => {
 };
 
 export default Graph;
+
+
+
+
+
+
 
 
 

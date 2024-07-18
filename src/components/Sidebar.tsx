@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { addNode, removeNode, removeEdge, setDeleteMode, setAddingEdge } from '../redux/graphSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addNode, removeNode, removeEdge, setDeleteMode, setAddingEdge, setIsDirected } from '../redux/graphSlice';
+import { RootState } from '../redux/store';
 import styles from './Sidebar.module.css';
 
 const Sidebar: React.FC = () => {
@@ -8,7 +9,7 @@ const Sidebar: React.FC = () => {
     const [numNodes, setNumNodes] = useState<number>(0);
     const [nodeIdToRemove, setNodeIdToRemove] = useState<string>("");
     const [edgeLabelToRemove, setEdgeLabelToRemove] = useState<string>("");
-    const [isDirected, setIsDirected] = useState<boolean>(false);
+    const isDirected = useSelector((state: RootState) => state.graph.isDirected);
 
     const handleAddNodes = () => {
         for (let i = 0; i < numNodes; i++) {
@@ -29,13 +30,11 @@ const Sidebar: React.FC = () => {
     };
 
     const handleRemoveEdge = () => {
-        if (edgeLabelToRemove) {
-            dispatch(removeEdge(edgeLabelToRemove));
-        }
+        dispatch(setDeleteMode(true));
     };
 
-    const handleToggleDeleteMode = () => {
-        dispatch(setDeleteMode(true));
+    const handleToggleDirected = () => {
+        dispatch(setIsDirected(!isDirected));
     };
 
     return (
@@ -66,7 +65,7 @@ const Sidebar: React.FC = () => {
                 <input
                     type="checkbox"
                     checked={isDirected}
-                    onChange={() => setIsDirected(!isDirected)}
+                    onChange={handleToggleDirected}
                 />
                 Орієнтоване
             </label>
