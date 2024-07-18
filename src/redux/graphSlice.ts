@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
-interface Node {
+export interface Node {
     id: string;
     label: string;
     x: number;
@@ -9,7 +9,7 @@ interface Node {
     degree: number;
 }
 
-interface Edge {
+export interface Edge {
     id: string;
     label: string;
     source: string;
@@ -130,13 +130,13 @@ const graphSlice = createSlice({
             }
         },
         removeEdge: (state, action: PayloadAction<string>) => {
-            const edgeToRemove = state.edges.find(edge => edge.label === action.payload);
+            const edgeToRemove = state.edges.find(edge => edge.id === action.payload);
             if (edgeToRemove) {
                 const sourceNode = state.nodes.find(node => node.id === edgeToRemove.source);
                 const targetNode = state.nodes.find(node => node.id === edgeToRemove.target);
                 if (sourceNode) sourceNode.degree -= 1;
                 if (targetNode) targetNode.degree -= 1;
-                state.edges = state.edges.filter(edge => edge.label !== action.payload);
+                state.edges = state.edges.filter(edge => edge.id !== action.payload);
             }
         },
         createNewGraph: (state) => {
@@ -210,17 +210,6 @@ export const {
 } = graphSlice.actions;
 
 export default graphSlice.reducer;
-
-
-
-
-
-
-
-
-
-
-
 
 
 

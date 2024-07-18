@@ -6,10 +6,10 @@
     background-color: #f1f1f1;
     padding: 20px;
     width: 15vw;
-    height: calc(100vh - 60px); /* Висота Header */
+    height: calc(100vh - 60px);
     position: fixed;
     left: 0;
-    top: 60px; /* Висота Header */
+    top: 60px;
     overflow-y: auto;
 }
 
@@ -44,6 +44,7 @@ button:active {
 label {
     margin: 10px 0;
 }
+
 
 
 

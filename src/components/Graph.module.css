@@ -1,8 +1,29 @@
-.graph {
-    width: calc(100% - 250px);
-    height: calc(100vh - 50px);
-    background-color: #ffffff;
+.graphContainer {
+    display: flex;
+    flex-direction: column; /* Розташування контейнера графу та матриці вертикально */
+    width: calc(100% - 15vw); /* Використовуємо всю ширину, за винятком ширини сайдбару */
+    height: calc(100vh - 60px); /* Використовуємо всю висоту, за винятком висоти хедера */
+    margin-left: 15vw; /* Зміщення для сайдбару */
     position: relative;
+    overflow: hidden;
 }
+
+.graph {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.matrixContainer {
+    width: 100%;
+    height: 200px;
+    background-color: white;
+    border: 1px solid black;
+    overflow: auto;
+    display: block; /* Відображати контейнер матриці */
+}
+
+
+
 
 
