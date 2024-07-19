@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNode, removeNode, removeEdge, setDeleteMode, setAddingEdge, setIsDirected } from '../redux/graphSlice';
+import { addNode, removeNode, removeEdge, setDeleteMode, setAddingEdge, setIsDirected, dfsTraversal, bfsTraversal } from '../redux/graphSlice';
 import { RootState } from '../redux/store';
 import styles from './Sidebar.module.css';
 
@@ -43,6 +43,14 @@ const Sidebar: React.FC = () => {
         }
     };
 
+    const handleDFS = () => {
+        dispatch(dfsTraversal());
+    };
+
+    const handleBFS = () => {
+        dispatch(bfsTraversal());
+    };
+
     return (
         <div className={styles.sidebar}>
             <div className={styles.nodeControl}>
@@ -69,11 +77,14 @@ const Sidebar: React.FC = () => {
                 />
                 Орієнтоване
             </label>
+            <button className={styles.button} onClick={handleDFS}>DFS</button>
+            <button className={styles.button} onClick={handleBFS}>BFS</button>
         </div>
     );
 };
 
 export default Sidebar;
+
 
 
 

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
-export interface Node {
+interface Node {
     id: string;
     label: string;
     x: number;
@@ -9,7 +9,7 @@ export interface Node {
     degree: number;
 }
 
-export interface Edge {
+interface Edge {
     id: string;
     label: string;
     source: string;
@@ -31,7 +31,7 @@ interface GraphState {
     history: any[];
     deleteMode: boolean;
     addingEdge: boolean;
-    nodeCounter: number; // Додаємо лічильник вершин
+    traversalResult: string[]; // Додано для збереження результатів обходу
 }
 
 const initialState: GraphState = {
@@ -48,7 +48,7 @@ const initialState: GraphState = {
     history: [],
     deleteMode: false,
     addingEdge: false,
-    nodeCounter: 0, // Ініціалізуємо лічильник вершин
+    traversalResult: [], // Ініціалізація
 };
 
 const graphSlice = createSlice({
@@ -56,8 +56,8 @@ const graphSlice = createSlice({
     initialState,
     reducers: {
         addNode: (state, action: PayloadAction<Omit<Node, 'id' | 'label' | 'degree'>>) => {
-            state.nodeCounter += 1; // Збільшуємо лічильник вершин
-            const newNode: Node = { ...action.payload, id: uuidv4(), label: `v${state.nodeCounter}`, degree: 0 };
+            state.numNodes += 1;
+            const newNode: Node = { ...action.payload, id: uuidv4(), label: `v${state.numNodes}`, degree: 0 };
             state.nodes.push(newNode);
         },
         addEdge: (state, action: PayloadAction<Omit<Edge, 'id' | 'label'>>) => {
@@ -132,13 +132,13 @@ const graphSlice = createSlice({
             }
         },
         removeEdge: (state, action: PayloadAction<string>) => {
-            const edgeToRemove = state.edges.find(edge => edge.id === action.payload);
+            const edgeToRemove = state.edges.find(edge => edge.label === action.payload);
             if (edgeToRemove) {
                 const sourceNode = state.nodes.find(node => node.id === edgeToRemove.source);
                 const targetNode = state.nodes.find(node => node.id === edgeToRemove.target);
                 if (sourceNode) sourceNode.degree -= 1;
                 if (targetNode) targetNode.degree -= 1;
-                state.edges = state.edges.filter(edge => edge.id !== action.payload);
+                state.edges = state.edges.filter(edge => edge.label !== action.payload);
             }
         },
         createNewGraph: (state) => {
@@ -155,18 +155,20 @@ const graphSlice = createSlice({
             state.history = [];
             state.deleteMode = false;
             state.addingEdge = false;
-            state.nodeCounter = 0; // Скидаємо лічильник вершин
+            state.traversalResult = []; // Додаємо очищення результатів
         },
         resetGraph: (state) => {
             state.nodes = [];
             state.edges = [];
+            state.numNodes = 0; // Скидання лічильника вершин
+            state.numEdges = 0; // Скидання лічильника ребер
             state.selectedNode = null;
             state.selectedEdge = null;
             state.history = [];
             state.deleteMode = false;
             state.showMatrix = false;
             state.addingEdge = false;
-            state.nodeCounter = 0; // Скидаємо лічильник вершин
+            state.traversalResult = []; // Додаємо очищення результатів
         },
         saveGraph: (state) => {
             console.log("Graph saved:", state);
@@ -182,6 +184,73 @@ const graphSlice = createSlice({
         },
         setAddingEdge: (state, action: PayloadAction<boolean>) => {
             state.addingEdge = action.payload;
+        },
+        dfsTraversal: (state) => {
+            const visited: { [key: string]: boolean } = {};
+            const result: string[] = [];
+
+            const dfs = (nodeId: string) => {
+                if (!visited[nodeId]) {
+                    visited[nodeId] = true;
+                    const node = state.nodes.find(n => n.id === nodeId);
+                    if (node) {
+                        result.push(node.label);
+                    }
+                    const neighbors = state.edges
+                        .filter(edge => edge.source === nodeId)
+                        .map(edge => edge.target)
+                        .concat(
+                            state.edges
+                                .filter(edge => edge.target === nodeId && !edge.directed)
+                                .map(edge => edge.source)
+                        );
+                    neighbors.forEach(neighbor => dfs(neighbor));
+                }
+            };
+
+            if (state.nodes.length > 0) {
+                dfs(state.nodes[0].id);
+            }
+
+            state.traversalResult = result;
+        },
+        bfsTraversal: (state) => {
+            const visited: { [key: string]: boolean } = {};
+            const result: string[] = [];
+            const queue: string[] = [];
+
+            const bfs = (startNodeId: string) => {
+                queue.push(startNodeId);
+                visited[startNodeId] = true;
+
+                while (queue.length > 0) {
+                    const nodeId = queue.shift()!;
+                    const node = state.nodes.find(n => n.id === nodeId);
+                    if (node) {
+                        result.push(node.label);
+                    }
+                    const neighbors = state.edges
+                        .filter(edge => edge.source === nodeId)
+                        .map(edge => edge.target)
+                        .concat(
+                            state.edges
+                                .filter(edge => edge.target === nodeId && !edge.directed)
+                                .map(edge => edge.source)
+                        );
+                    neighbors.forEach(neighbor => {
+                        if (!visited[neighbor]) {
+                            queue.push(neighbor);
+                            visited[neighbor] = true;
+                        }
+                    });
+                }
+            };
+
+            if (state.nodes.length > 0) {
+                bfs(state.nodes[0].id);
+            }
+
+            state.traversalResult = result;
         },
     },
 });
@@ -211,9 +280,13 @@ export const {
     toggleSidebar,
     toggleDeleteMode,
     setAddingEdge,
+    dfsTraversal,
+    bfsTraversal,
 } = graphSlice.actions;
 
 export default graphSlice.reducer;
+
+
 
 
 
