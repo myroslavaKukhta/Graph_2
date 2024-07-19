@@ -32,12 +32,19 @@ const Header: React.FC = () => {
                 type="text"
                 placeholder="Назва графа"
                 onChange={(e) => dispatch(setGraphName(e.target.value))}
+                className={styles.input}
             />
-            <button onClick={handleCreateNewGraph}>Новий граф</button>
-            <button onClick={handleResetGraph}>Скинути граф</button>
-            <button onClick={handleSaveGraph}>Зберегти граф</button>
-            <button onClick={handleToggleShowMatrix}>Показати матрицю</button>
-            <button onClick={handleToggleSidebar}>Меню</button>
+            <div className={styles.buttonGroup}>
+                <button className={styles.button} onClick={handleCreateNewGraph}>Новий граф</button>
+                <button className={styles.button} onClick={handleResetGraph}>Скинути граф</button>
+                <button className={styles.button} onClick={handleSaveGraph}>Зберегти граф</button>
+                <button className={styles.button} onClick={handleToggleShowMatrix}>Показати матрицю</button>
+                <button className={styles.burgerButton} onClick={handleToggleSidebar}>
+                    <span className={styles.burgerIcon}></span>
+                    <span className={styles.burgerIcon}></span>
+                    <span className={styles.burgerIcon}></span>
+                </button>
+            </div>
         </div>
     );
 };

@@ -1,11 +1,13 @@
 .graphContainer {
     display: flex;
-    flex-direction: column; /* Розташування контейнера графу та матриці вертикально */
-    width: calc(100% - 15vw); /* Використовуємо всю ширину, за винятком ширини сайдбару */
-    height: calc(100vh - 60px); /* Використовуємо всю висоту, за винятком висоти хедера */
-    margin-left: 15vw; /* Зміщення для сайдбару */
+    flex-direction: column;
+    width: calc(100% - 200px);
+    height: calc(100vh - 60px);
     position: relative;
     overflow: hidden;
+    border: 1px solid #333;
+    background-color: #f5f5f5;
+    padding: 5px;
 }
 
 .graph {
@@ -20,9 +22,9 @@
     background-color: white;
     border: 1px solid black;
     overflow: auto;
-    display: block; /* Відображати контейнер матриці */
+    display: block;
+    padding: 10px;
 }
-
 
 
 

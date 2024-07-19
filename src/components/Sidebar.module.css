@@ -3,25 +3,28 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    background-color: #f1f1f1;
+    background-color: #3c3c3c; /* Сірий колір фону */
     padding: 20px;
-    width: 20vw; /* Збільшуємо ширину сайдбару */
+    width: 200px; /* Ширина сайдбару */
     height: calc(100vh - 60px); /* Висота Header */
     position: fixed;
     left: 0;
     top: 60px; /* Висота Header */
     overflow-y: auto;
+    color: white; /* Колір тексту */
 }
 
-input {
+.input {
     margin-bottom: 10px;
     padding: 10px;
     font-size: 16px;
-    width: 100%;
+    width: 50px;
     box-sizing: border-box;
+    color: black; /* Колір тексту в інпуті */
+    text-align: center;
 }
 
-button {
+.button {
     margin: 10px 0;
     padding: 10px 15px; /* Вужчі кнопки */
     font-size: 16px;
@@ -34,17 +37,52 @@ button {
     width: 100%; /* Однаковий розмір кнопок */
 }
 
-button:hover {
+.button:hover {
     background-color: #0056b3;
 }
 
-button:active {
+.button:active {
     background-color: #004085;
 }
 
-label {
-    margin: 10px 0;
+.nodeControl {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
 }
+
+.controlButton {
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.controlButton:hover {
+    background-color: #0056b3;
+}
+
+.controlButton:active {
+    background-color: #004085;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    color: white;
+}
+
+.checkbox {
+    margin-right: 10px;
+}
+
+
+
 
 
 

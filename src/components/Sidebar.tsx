@@ -7,8 +7,6 @@ import styles from './Sidebar.module.css';
 const Sidebar: React.FC = () => {
     const dispatch = useDispatch();
     const [numNodes, setNumNodes] = useState<number>(0);
-    const [nodeIdToRemove, setNodeIdToRemove] = useState<string>("");
-    const [edgeLabelToRemove, setEdgeLabelToRemove] = useState<string>("");
     const isDirected = useSelector((state: RootState) => state.graph.isDirected);
 
     const handleAddNodes = () => {
@@ -20,9 +18,7 @@ const Sidebar: React.FC = () => {
     };
 
     const handleRemoveNode = () => {
-        if (nodeIdToRemove) {
-            dispatch(removeNode(nodeIdToRemove));
-        }
+        dispatch(setDeleteMode(true));
     };
 
     const handleAddEdge = () => {
@@ -37,44 +33,49 @@ const Sidebar: React.FC = () => {
         dispatch(setIsDirected(!isDirected));
     };
 
+    const handleIncrementNodes = () => {
+        setNumNodes(numNodes + 1);
+    };
+
+    const handleDecrementNodes = () => {
+        if (numNodes > 0) {
+            setNumNodes(numNodes - 1);
+        }
+    };
+
     return (
         <div className={styles.sidebar}>
-            <input
-                type="number"
-                value={numNodes}
-                onChange={(e) => setNumNodes(Number(e.target.value))}
-                placeholder="Кількість вершин"
-                min="0"
-            />
-            <button onClick={handleAddNodes}>Додати вершини</button>
-            <input
-                type="text"
-                value={nodeIdToRemove}
-                onChange={(e) => setNodeIdToRemove(e.target.value)}
-                placeholder="Вершина для видалення"
-            />
-            <button onClick={handleRemoveNode}>Видалити вершину</button>
-            <button onClick={handleAddEdge}>Додати ребро</button>
-            <input
-                type="text"
-                value={edgeLabelToRemove}
-                onChange={(e) => setEdgeLabelToRemove(e.target.value)}
-                placeholder="Назва ребра для видалення"
-            />
-            <label>
+            <div className={styles.nodeControl}>
+                <button className={styles.controlButton} onClick={handleDecrementNodes}>-</button>
+                <input
+                    type="number"
+                    value={numNodes}
+                    onChange={(e) => setNumNodes(Number(e.target.value))}
+                    className={styles.input}
+                    min="0"
+                />
+                <button className={styles.controlButton} onClick={handleIncrementNodes}>+</button>
+            </div>
+            <button className={styles.button} onClick={handleAddNodes}>Додати вершини</button>
+            <button className={styles.button} onClick={handleRemoveNode}>Видалити вершину</button>
+            <button className={styles.button} onClick={handleAddEdge}>Додати ребро</button>
+            <button className={styles.button} onClick={handleRemoveEdge}>Видалити ребро</button>
+            <label className={styles.checkboxLabel}>
                 <input
                     type="checkbox"
                     checked={isDirected}
                     onChange={handleToggleDirected}
+                    className={styles.checkbox}
                 />
                 Орієнтоване
             </label>
-            <button onClick={handleRemoveEdge}>Видалити ребро</button>
         </div>
     );
 };
 
 export default Sidebar;
+
+
 
 
 

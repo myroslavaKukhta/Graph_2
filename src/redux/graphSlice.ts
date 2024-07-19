@@ -31,6 +31,7 @@ interface GraphState {
     history: any[];
     deleteMode: boolean;
     addingEdge: boolean;
+    nodeCounter: number; // Додаємо лічильник вершин
 }
 
 const initialState: GraphState = {
@@ -47,6 +48,7 @@ const initialState: GraphState = {
     history: [],
     deleteMode: false,
     addingEdge: false,
+    nodeCounter: 0, // Ініціалізуємо лічильник вершин
 };
 
 const graphSlice = createSlice({
@@ -54,8 +56,8 @@ const graphSlice = createSlice({
     initialState,
     reducers: {
         addNode: (state, action: PayloadAction<Omit<Node, 'id' | 'label' | 'degree'>>) => {
-            state.numNodes += 1;
-            const newNode: Node = { ...action.payload, id: uuidv4(), label: `v${state.numNodes}`, degree: 0 };
+            state.nodeCounter += 1; // Збільшуємо лічильник вершин
+            const newNode: Node = { ...action.payload, id: uuidv4(), label: `v${state.nodeCounter}`, degree: 0 };
             state.nodes.push(newNode);
         },
         addEdge: (state, action: PayloadAction<Omit<Edge, 'id' | 'label'>>) => {
@@ -153,6 +155,7 @@ const graphSlice = createSlice({
             state.history = [];
             state.deleteMode = false;
             state.addingEdge = false;
+            state.nodeCounter = 0; // Скидаємо лічильник вершин
         },
         resetGraph: (state) => {
             state.nodes = [];
@@ -163,6 +166,7 @@ const graphSlice = createSlice({
             state.deleteMode = false;
             state.showMatrix = false;
             state.addingEdge = false;
+            state.nodeCounter = 0; // Скидаємо лічильник вершин
         },
         saveGraph: (state) => {
             console.log("Graph saved:", state);
@@ -210,6 +214,8 @@ export const {
 } = graphSlice.actions;
 
 export default graphSlice.reducer;
+
+
 
 
 

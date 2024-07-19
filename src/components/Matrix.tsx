@@ -1,6 +1,21 @@
 import React from 'react';
-import { Node, Edge } from '../redux/graphSlice';
 import styles from './Matrix.module.css';
+
+interface Node {
+    id: string;
+    label: string;
+    x: number;
+    y: number;
+    degree: number;
+}
+
+interface Edge {
+    id: string;
+    label: string;
+    source: string;
+    target: string;
+    directed: boolean;
+}
 
 interface MatrixProps {
     nodes: Node[];
@@ -8,44 +23,47 @@ interface MatrixProps {
 }
 
 const Matrix: React.FC<MatrixProps> = ({ nodes, edges }) => {
-    const nodeLabels = nodes.map(node => node.label);
-    const nodeIds = nodes.map(node => node.id);
-    const matrix: number[][] = Array(nodeIds.length).fill(0).map(() => Array(nodeIds.length).fill(0));
+    const adjacencyMatrix = nodes.map(node => nodes.map(() => 0));
 
     edges.forEach(edge => {
-        const sourceIndex = nodeIds.indexOf(edge.source);
-        const targetIndex = nodeIds.indexOf(edge.target);
+        const sourceIndex = nodes.findIndex(node => node.id === edge.source);
+        const targetIndex = nodes.findIndex(node => node.id === edge.target);
         if (sourceIndex !== -1 && targetIndex !== -1) {
-            matrix[sourceIndex][targetIndex] = 1;
+            adjacencyMatrix[sourceIndex][targetIndex] = 1;
             if (!edge.directed) {
-                matrix[targetIndex][sourceIndex] = 1;
+                adjacencyMatrix[targetIndex][sourceIndex] = 1;
             }
         }
     });
 
     return (
-        <table className={styles.matrixTable}>
-            <thead>
-            <tr>
-                <th></th>
-                {nodeLabels.map(label => <th key={label}>{label}</th>)}
-            </tr>
-            </thead>
-            <tbody>
-            {matrix.map((row, rowIndex) => (
-                <tr key={nodeLabels[rowIndex]}>
-                    <th>{nodeLabels[rowIndex]}</th>
-                    {row.map((cell, cellIndex) => (
-                        <td key={`${rowIndex}-${cellIndex}`}>{cell}</td>
+        <div className={styles.matrixContainer}>
+            <table className={styles.matrixTable}>
+                <thead>
+                <tr>
+                    <th></th>
+                    {nodes.map(node => (
+                        <th key={node.id}>{node.label}</th>
                     ))}
                 </tr>
-            ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {nodes.map((node, rowIndex) => (
+                    <tr key={node.id}>
+                        <th>{node.label}</th>
+                        {nodes.map((_, colIndex) => (
+                            <td key={colIndex}>{adjacencyMatrix[rowIndex][colIndex]}</td>
+                        ))}
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+        </div>
     );
 };
 
 export default Matrix;
+
 
 
 

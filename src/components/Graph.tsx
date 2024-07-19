@@ -27,7 +27,7 @@ const Graph: React.FC = () => {
                     if (nodeId) {
                         dispatch(removeNode(nodeId));
                     }
-                } else if (target.tagName === 'line') {
+                } else if (target.tagName === 'line' || target.tagName === 'path') {
                     const edgeId = target.getAttribute('id');
                     if (edgeId) {
                         dispatch(removeEdge(edgeId));
@@ -94,8 +94,8 @@ const Graph: React.FC = () => {
         <div className={styles.graphContainer}>
             <svg className={styles.graph}>
                 <defs>
-                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto" markerUnits="strokeWidth">
-                        <path d="M0,0 L10,5 L0,10 z" fill="#000" />
+                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L10,3 L0,6 z" fill="#00008B" />
                     </marker>
                 </defs>
                 {edges.map(edge => {
@@ -107,8 +107,9 @@ const Graph: React.FC = () => {
                         <g key={edge.id}>
                             {isLoop ? (
                                 <path
+                                    id={edge.id}
                                     d={`M ${sourceNode.x} ${sourceNode.y} C ${sourceNode.x - 20} ${sourceNode.y - 20}, ${sourceNode.x + 20} ${sourceNode.y - 20}, ${sourceNode.x} ${sourceNode.y}`}
-                                    stroke="black"
+                                    stroke="#00008B"
                                     fill="transparent"
                                     markerEnd={edge.directed ? "url(#arrow)" : ""}
                                     strokeWidth="2"
@@ -121,7 +122,7 @@ const Graph: React.FC = () => {
                                     y1={sourceNode.y}
                                     x2={targetNode.x}
                                     y2={targetNode.y}
-                                    stroke="black"
+                                    stroke="#00008B"
                                     strokeWidth="2"
                                     markerEnd={edge.directed ? "url(#arrow)" : ""}
                                     onClick={handleLineClick}
@@ -173,6 +174,8 @@ const Graph: React.FC = () => {
 };
 
 export default Graph;
+
+
 
 
 
