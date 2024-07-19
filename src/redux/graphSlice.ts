@@ -31,7 +31,7 @@ interface GraphState {
     history: any[];
     deleteMode: boolean;
     addingEdge: boolean;
-    traversalResult: string[]; // Додано для збереження результатів обходу
+    traversalResult: string[];
 }
 
 const initialState: GraphState = {
@@ -48,7 +48,7 @@ const initialState: GraphState = {
     history: [],
     deleteMode: false,
     addingEdge: false,
-    traversalResult: [], // Ініціалізація
+    traversalResult: [],
 };
 
 const graphSlice = createSlice({
@@ -130,16 +130,18 @@ const graphSlice = createSlice({
                 });
                 state.nodes = state.nodes.filter(node => node.id !== action.payload);
             }
+            state.deleteMode = false;
         },
         removeEdge: (state, action: PayloadAction<string>) => {
-            const edgeToRemove = state.edges.find(edge => edge.label === action.payload);
+            const edgeToRemove = state.edges.find(edge => edge.id === action.payload);
             if (edgeToRemove) {
                 const sourceNode = state.nodes.find(node => node.id === edgeToRemove.source);
                 const targetNode = state.nodes.find(node => node.id === edgeToRemove.target);
                 if (sourceNode) sourceNode.degree -= 1;
                 if (targetNode) targetNode.degree -= 1;
-                state.edges = state.edges.filter(edge => edge.label !== action.payload);
+                state.edges = state.edges.filter(edge => edge.id !== action.payload);
             }
+            state.deleteMode = false;
         },
         createNewGraph: (state) => {
             state.nodes = [];
@@ -155,20 +157,20 @@ const graphSlice = createSlice({
             state.history = [];
             state.deleteMode = false;
             state.addingEdge = false;
-            state.traversalResult = []; // Додаємо очищення результатів
+            state.traversalResult = [];
         },
         resetGraph: (state) => {
             state.nodes = [];
             state.edges = [];
-            state.numNodes = 0; // Скидання лічильника вершин
-            state.numEdges = 0; // Скидання лічильника ребер
+            state.numNodes = 0;
+            state.numEdges = 0;
             state.selectedNode = null;
             state.selectedEdge = null;
             state.history = [];
             state.deleteMode = false;
             state.showMatrix = false;
             state.addingEdge = false;
-            state.traversalResult = []; // Додаємо очищення результатів
+            state.traversalResult = [];
         },
         saveGraph: (state) => {
             console.log("Graph saved:", state);
@@ -285,6 +287,8 @@ export const {
 } = graphSlice.actions;
 
 export default graphSlice.reducer;
+
+
 
 
 

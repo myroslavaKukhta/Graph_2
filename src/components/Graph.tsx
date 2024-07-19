@@ -27,11 +27,13 @@ const Graph: React.FC = () => {
                     const nodeId = target.getAttribute('id');
                     if (nodeId) {
                         dispatch(removeNode(nodeId));
+                        dispatch(setDeleteMode(false));
                     }
                 } else if (target.tagName === 'line' || target.tagName === 'path') {
                     const edgeId = target.getAttribute('id');
                     if (edgeId) {
                         dispatch(removeEdge(edgeId));
+                        dispatch(setDeleteMode(false));
                     }
                 }
             } else if (addingEdge && target.tagName === 'circle') {
@@ -87,6 +89,7 @@ const Graph: React.FC = () => {
             const edgeId = event.currentTarget.getAttribute('id');
             if (edgeId) {
                 dispatch(removeEdge(edgeId));
+                dispatch(setDeleteMode(false));
             }
         }
     };
@@ -189,6 +192,9 @@ const Graph: React.FC = () => {
 };
 
 export default Graph;
+
+
+
 
 
 
