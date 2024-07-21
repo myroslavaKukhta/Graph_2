@@ -174,6 +174,27 @@ const graphSlice = createSlice({
         },
         saveGraph: (state) => {
             console.log("Graph saved:", state);
+            const graphData = {
+                nodes: state.nodes,
+                edges: state.edges,
+                numNodes: state.numNodes,
+                numEdges: state.numEdges,
+                graphName: state.graphName,
+                isDirected: state.isDirected,
+            };
+            localStorage.setItem('graphData', JSON.stringify(graphData));
+        },
+        loadGraph: (state) => {
+            const graphData = localStorage.getItem('graphData');
+            if (graphData) {
+                const parsedData = JSON.parse(graphData);
+                state.nodes = parsedData.nodes;
+                state.edges = parsedData.edges;
+                state.numNodes = parsedData.numNodes;
+                state.numEdges = parsedData.numEdges;
+                state.graphName = parsedData.graphName;
+                state.isDirected = parsedData.isDirected;
+            }
         },
         toggleShowMatrix: (state) => {
             state.showMatrix = !state.showMatrix;
@@ -278,6 +299,7 @@ export const {
     createNewGraph,
     resetGraph,
     saveGraph,
+    loadGraph,
     toggleShowMatrix,
     toggleSidebar,
     toggleDeleteMode,
@@ -287,6 +309,7 @@ export const {
 } = graphSlice.actions;
 
 export default graphSlice.reducer;
+
 
 
 
