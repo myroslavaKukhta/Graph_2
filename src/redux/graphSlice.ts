@@ -1,5 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
+import { RootState } from './store';
+import { saveGraph as saveGraphAPI, loadGraph as loadGraphAPI } from '../services/api';
 
 interface Node {
     id: string;
@@ -50,6 +52,30 @@ const initialState: GraphState = {
     addingEdge: false,
     traversalResult: [],
 };
+
+export const saveGraphThunk = createAsyncThunk(
+    'graph/saveGraph',
+    async (graphData: GraphState, { rejectWithValue }) => {
+        try {
+            const response = await saveGraphAPI(graphData);
+            return response;
+        } catch (error) {
+            return rejectWithValue((error as Error).message);
+        }
+    }
+);
+
+export const loadGraphThunk = createAsyncThunk(
+    'graph/loadGraph',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await loadGraphAPI();
+            return response;
+        } catch (error) {
+            return rejectWithValue((error as Error).message);
+        }
+    }
+);
 
 const graphSlice = createSlice({
     name: 'graph',
@@ -174,15 +200,6 @@ const graphSlice = createSlice({
         },
         saveGraph: (state) => {
             console.log("Graph saved:", state);
-            const graphData = {
-                nodes: state.nodes,
-                edges: state.edges,
-                numNodes: state.numNodes,
-                numEdges: state.numEdges,
-                graphName: state.graphName,
-                isDirected: state.isDirected,
-            };
-            localStorage.setItem('graphData', JSON.stringify(graphData));
         },
         loadGraph: (state) => {
             const graphData = localStorage.getItem('graphData');
@@ -276,6 +293,27 @@ const graphSlice = createSlice({
             state.traversalResult = result;
         },
     },
+    extraReducers: (builder) => {
+        builder
+            .addCase(saveGraphThunk.fulfilled, (state, action) => {
+                console.log('Graph saved to server:', action.payload);
+            })
+            .addCase(saveGraphThunk.rejected, (state, action) => {
+                console.error('Failed to save graph to server:', action.payload);
+            })
+            .addCase(loadGraphThunk.fulfilled, (state, action) => {
+                const { nodes, edges, numNodes, numEdges, graphName, isDirected } = action.payload;
+                state.nodes = nodes;
+                state.edges = edges;
+                state.numNodes = numNodes;
+                state.numEdges = numEdges;
+                state.graphName = graphName;
+                state.isDirected = isDirected;
+            })
+            .addCase(loadGraphThunk.rejected, (state, action) => {
+                console.error('Failed to load graph from server:', action.payload);
+            });
+    }
 });
 
 export const {
@@ -309,6 +347,14 @@ export const {
 } = graphSlice.actions;
 
 export default graphSlice.reducer;
+
+
+
+
+
+
+
+
 
 
 

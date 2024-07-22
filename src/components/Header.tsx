@@ -1,18 +1,20 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     setGraphName,
     resetGraph,
     toggleShowMatrix,
     toggleSidebar,
-    saveGraph,
-    loadGraph,
     createNewGraph,
+    saveGraphThunk,
+    loadGraphThunk,
 } from '../redux/graphSlice';
+import { RootState } from '../redux/store';
 import styles from './Header.module.css';
 
 const Header: React.FC = () => {
     const dispatch = useDispatch();
+    const graphState = useSelector((state: RootState) => state.graph);
 
     const handleCreateNewGraph = () => {
         dispatch(createNewGraph());
@@ -23,11 +25,11 @@ const Header: React.FC = () => {
     };
 
     const handleSaveGraph = () => {
-        dispatch(saveGraph());
+        dispatch(saveGraphThunk(graphState));
     };
 
     const handleLoadGraph = () => {
-        dispatch(loadGraph());
+        dispatch(loadGraphThunk());
     };
 
     const handleToggleSidebar = () => {
@@ -56,6 +58,11 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+
+
+
+
+
 
 
 
