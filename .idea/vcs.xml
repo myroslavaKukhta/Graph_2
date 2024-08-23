@@ -3,15 +3,11 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../HTMLReactIncubator/SC-attrs-Lesson-1" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../homework-front-main" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../it-incubator-todolist-ts-10" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../it-incubator-todolist-ts-11" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../kabzda_vixen" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../my-diaryTodo" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../myr-counter" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../portfolio-start-project" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../samurai-way3" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../samurai-way_2" vcs="Git" />
   </component>
 </project>
