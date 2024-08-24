@@ -3,4 +3,9 @@
     stroke: #999;
     stroke-width: 2;
     fill: none;
+    transition: stroke-width 0.3s ease;
+}
+
+.edge:hover {
+    stroke-width: 3;
 }

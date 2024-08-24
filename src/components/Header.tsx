@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
     setGraphName,
     resetGraph,
@@ -15,6 +16,18 @@ import styles from './Header.module.css';
 const Header: React.FC = () => {
     const dispatch = useDispatch();
     const graphState = useSelector((state: RootState) => state.graph);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const navigate = useNavigate();
+
+    const handleNavigation = (path: string) => {
+        navigate(path);
+        setMenuOpen(false);  // Close menu after navigation
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('authToken');
+        handleNavigation('/login');
+    };
 
     const handleCreateNewGraph = () => {
         dispatch(createNewGraph());
@@ -40,6 +53,10 @@ const Header: React.FC = () => {
         dispatch(toggleShowMatrix());
     };
 
+    const toggleMenu = () => {
+        setMenuOpen(!menuOpen);
+    };
+
     return (
         <div className={styles.header}>
             <input
@@ -52,12 +69,25 @@ const Header: React.FC = () => {
             <button onClick={handleSaveGraph}>Зберегти граф</button>
             <button onClick={handleLoadGraph}>Завантажити граф</button>
             <button onClick={handleToggleShowMatrix}>Показати матрицю</button>
-            <button onClick={handleToggleSidebar}>Меню</button>
+            <button onClick={toggleMenu} className={styles.burgerButton}>
+                ☰ Меню
+            </button>
+            {menuOpen && (
+                <div className={styles.burgerMenu}>
+                    <button onClick={() => handleNavigation('/')}>Головна сторінка</button>
+                    <button onClick={() => handleNavigation('/help')}>Інструкції</button>
+                    <button onClick={() => handleNavigation('/settings')}>Налаштування</button>
+                    <button onClick={() => handleNavigation('/about')}>Про нас</button>
+                    <button onClick={handleLogout}>Вихід</button>
+                </div>
+            )}
         </div>
     );
 };
 
 export default Header;
+
+
 
 
 
