@@ -1,9 +1,10 @@
+
 .header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     background-color: #333;
-    padding: 10px;
+    padding: 10px 20px;
     color: white;
     position: fixed;
     top: 0;
@@ -13,35 +14,72 @@
     z-index: 1000;
 }
 
+.header input[type="text"] {
+    margin-right: 15px;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.header button {
+    margin-right: 10px;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    color: #ffffff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.header button:hover {
+    background-color: #0056b3;
+}
+
+.header button:active {
+    background-color: #004085;
+}
+
 .burgerButton {
-    background: none;
+    font-size: 24px;
+    cursor: pointer;
+    background-color: #333;
     border: none;
     color: white;
-    font-size: 20px;
-    cursor: pointer;
 }
 
 .burgerMenu {
     position: absolute;
     top: 60px;
-    right: 10px;
+    right: 20px;
     background-color: #333;
     padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1001;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .burgerMenu button {
-    background: none;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    cursor: pointer;
-    text-align: left;
     width: 100%;
-    display: block;
+    margin: 5px 0;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    color: #ffffff;
+    background-color: dimgrey;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .burgerMenu button:hover {
-    background-color: #444;
+    background-color: #0056b3;
 }
+
+.burgerMenu button:active {
+    background-color: #004085;
+}
+

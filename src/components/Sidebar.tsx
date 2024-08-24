@@ -1,19 +1,34 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNode, removeNode, removeEdge, setDeleteMode, setAddingEdge, setIsDirected, dfsTraversal, bfsTraversal } from '../redux/graphSlice';
 import { RootState } from '../redux/store';
+import {
+    addNode,
+    removeNode,
+    addEdge,
+    removeEdge,
+    setDeleteMode,
+    setAddingEdge,
+    setIsDirected,
+    dfsTraversal,
+    bfsTraversal,
+} from '../redux/graphSlice';
 import styles from './Sidebar.module.css';
 
 const Sidebar: React.FC = () => {
     const dispatch = useDispatch();
     const [numNodes, setNumNodes] = useState<number>(0);
     const isDirected = useSelector((state: RootState) => state.graph.isDirected);
+    const selectedEdge = useSelector((state: RootState) => state.graph.selectedEdge);
 
     const handleAddNodes = () => {
-        for (let i = 0; i < numNodes; i++) {
-            const x = Math.random() * 500;
-            const y = Math.random() * 500;
-            dispatch(addNode({ x, y }));
+        if (numNodes > 0) {
+            for (let i = 0; i < numNodes; i++) {
+                const x = Math.random() * 500;
+                const y = Math.random() * 500;
+                dispatch(addNode({ x, y }));
+            }
+        } else {
+            alert("Введіть коректну кількість вершин для додавання.");
         }
     };
 
@@ -26,7 +41,11 @@ const Sidebar: React.FC = () => {
     };
 
     const handleRemoveEdge = () => {
-        dispatch(setDeleteMode(true));
+        if (selectedEdge) {
+            dispatch(removeEdge(selectedEdge));
+        } else {
+            alert("Виберіть ребро для видалення.");
+        }
     };
 
     const handleToggleDirected = () => {
@@ -34,13 +53,11 @@ const Sidebar: React.FC = () => {
     };
 
     const handleIncrementNodes = () => {
-        setNumNodes(numNodes + 1);
+        setNumNodes((prevNumNodes) => prevNumNodes + 1);
     };
 
     const handleDecrementNodes = () => {
-        if (numNodes > 0) {
-            setNumNodes(numNodes - 1);
-        }
+        setNumNodes((prevNumNodes) => Math.max(prevNumNodes - 1, 0));
     };
 
     const handleDFS = () => {
@@ -55,6 +72,7 @@ const Sidebar: React.FC = () => {
         <div className={styles.sidebar}>
             <div className={styles.nodeControl}>
                 <button className={styles.controlButton} onClick={handleDecrementNodes}>-</button>
+                <button className={styles.controlButton} onClick={handleIncrementNodes}>+</button>
                 <input
                     type="number"
                     value={numNodes}
@@ -62,7 +80,7 @@ const Sidebar: React.FC = () => {
                     className={styles.input}
                     min="0"
                 />
-                <button className={styles.controlButton} onClick={handleIncrementNodes}>+</button>
+
             </div>
             <button className={styles.button} onClick={handleAddNodes}>Додати вершини</button>
             <button className={styles.button} onClick={handleRemoveNode}>Видалити вершину</button>
@@ -75,33 +93,15 @@ const Sidebar: React.FC = () => {
                     onChange={handleToggleDirected}
                     className={styles.checkbox}
                 />
-                Орієнтоване
+                Орієнтоване ребро
             </label>
-            <button className={styles.button} onClick={handleDFS}>DFS</button>
-            <button className={styles.button} onClick={handleBFS}>BFS</button>
+            <button className={styles.button} onClick={handleDFS}>DFS <br/>(пошук в глибину)</button>
+            <button className={styles.button} onClick={handleBFS}>BFS <br/> (пошук в ширину) </button>
         </div>
     );
 };
 
 export default Sidebar;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

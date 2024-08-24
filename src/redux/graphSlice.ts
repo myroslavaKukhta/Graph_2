@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { RootState } from './store';
 import { saveGraph as saveGraphAPI, loadGraph as loadGraphAPI } from '../services/api';
 
+// Оголошення інтерфейсів
 interface Node {
     id: string;
     label: string;
@@ -36,6 +37,7 @@ interface GraphState {
     traversalResult: string[];
 }
 
+// Початковий стан
 const initialState: GraphState = {
     nodes: [],
     edges: [],
@@ -53,6 +55,7 @@ const initialState: GraphState = {
     traversalResult: [],
 };
 
+// Асинхронні дії для збереження та завантаження графу
 export const saveGraphThunk = createAsyncThunk(
     'graph/saveGraph',
     async (graphData: GraphState, { rejectWithValue }) => {
@@ -77,6 +80,7 @@ export const loadGraphThunk = createAsyncThunk(
     }
 );
 
+// Слайс для управління станом графу
 const graphSlice = createSlice({
     name: 'graph',
     initialState,
@@ -347,6 +351,7 @@ export const {
 } = graphSlice.actions;
 
 export default graphSlice.reducer;
+
 
 
 

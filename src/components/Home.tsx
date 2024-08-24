@@ -41,7 +41,7 @@ const Home: React.FC = () => {
                 Вхід без авторизації
             </button>
             <div className={styles.infoSection}>
-                <p>Дізнайтеся більше про наші можливості і графічні рішення!</p>
+                <p>***</p>
             </div>
             <footer className={styles.footer}>
                 <h2>Контакти</h2>

@@ -21,7 +21,7 @@ const Header: React.FC = () => {
 
     const handleNavigation = (path: string) => {
         navigate(path);
-        setMenuOpen(false);  // Close menu after navigation
+        setMenuOpen(false);  // Закрити меню після навігації
     };
 
     const handleLogout = () => {
@@ -86,6 +86,7 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+
 
 
 
