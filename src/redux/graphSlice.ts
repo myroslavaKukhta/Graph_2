@@ -35,6 +35,9 @@ interface GraphState {
     deleteMode: boolean;
     addingEdge: boolean;
     traversalResult: string[];
+    traversalOrder: string[]; // Додаємо для візуалізації
+    currentTraversalIndex: number; // Індекс для візуалізації
+    isVisualizing: boolean; // Флаг для візуалізації
 }
 
 // Початковий стан
@@ -53,6 +56,9 @@ const initialState: GraphState = {
     deleteMode: false,
     addingEdge: false,
     traversalResult: [],
+    traversalOrder: [], // Початкове значення для візуалізації
+    currentTraversalIndex: -1, // Початковий індекс візуалізації
+    isVisualizing: false, // Початковий стан візуалізації
 };
 
 // Асинхронні дії для збереження та завантаження графу
@@ -188,6 +194,9 @@ const graphSlice = createSlice({
             state.deleteMode = false;
             state.addingEdge = false;
             state.traversalResult = [];
+            state.traversalOrder = [];
+            state.currentTraversalIndex = -1;
+            state.isVisualizing = false;
         },
         resetGraph: (state) => {
             state.nodes = [];
@@ -201,6 +210,9 @@ const graphSlice = createSlice({
             state.showMatrix = false;
             state.addingEdge = false;
             state.traversalResult = [];
+            state.traversalOrder = [];
+            state.currentTraversalIndex = -1;
+            state.isVisualizing = false;
         },
         saveGraph: (state) => {
             console.log("Graph saved:", state);
@@ -240,14 +252,11 @@ const graphSlice = createSlice({
                     if (node) {
                         result.push(node.label);
                     }
-                    const neighbors = state.edges
-                        .filter(edge => edge.source === nodeId)
-                        .map(edge => edge.target)
-                        .concat(
-                            state.edges
-                                .filter(edge => edge.target === nodeId && !edge.directed)
-                                .map(edge => edge.source)
-                        );
+                    const neighbors = state.edges.reduce<string[]>((acc, edge) => {
+                        if (edge.source === nodeId) acc.push(edge.target);
+                        if (edge.target === nodeId && !edge.directed) acc.push(edge.source);
+                        return acc;
+                    }, []);
                     neighbors.forEach(neighbor => dfs(neighbor));
                 }
             };
@@ -257,6 +266,9 @@ const graphSlice = createSlice({
             }
 
             state.traversalResult = result;
+            state.traversalOrder = result;
+            state.currentTraversalIndex = 0;
+            state.isVisualizing = true;
         },
         bfsTraversal: (state) => {
             const visited: { [key: string]: boolean } = {};
@@ -273,14 +285,11 @@ const graphSlice = createSlice({
                     if (node) {
                         result.push(node.label);
                     }
-                    const neighbors = state.edges
-                        .filter(edge => edge.source === nodeId)
-                        .map(edge => edge.target)
-                        .concat(
-                            state.edges
-                                .filter(edge => edge.target === nodeId && !edge.directed)
-                                .map(edge => edge.source)
-                        );
+                    const neighbors = state.edges.reduce<string[]>((acc, edge) => {
+                        if (edge.source === nodeId) acc.push(edge.target);
+                        if (edge.target === nodeId && !edge.directed) acc.push(edge.source);
+                        return acc;
+                    }, []);
                     neighbors.forEach(neighbor => {
                         if (!visited[neighbor]) {
                             queue.push(neighbor);
@@ -295,6 +304,21 @@ const graphSlice = createSlice({
             }
 
             state.traversalResult = result;
+            state.traversalOrder = result;
+            state.currentTraversalIndex = 0;
+            state.isVisualizing = true;
+        },
+        updateTraversalVisualization: (state) => {
+            if (state.currentTraversalIndex < state.traversalOrder.length - 1) {
+                state.currentTraversalIndex += 1;
+            } else {
+                state.isVisualizing = false;
+            }
+        },
+        resetTraversalVisualization: (state) => {
+            state.traversalOrder = [];
+            state.currentTraversalIndex = -1;
+            state.isVisualizing = false;
         },
     },
     extraReducers: (builder) => {
@@ -348,33 +372,8 @@ export const {
     setAddingEdge,
     dfsTraversal,
     bfsTraversal,
+    updateTraversalVisualization,
+    resetTraversalVisualization,
 } = graphSlice.actions;
 
 export default graphSlice.reducer;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
