@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { setNodes, setEdges, addNode, addEdge, removeNode, removeEdge, setAddingEdge, setDeleteMode, dfsTraversal, bfsTraversal } from '../redux/graphSlice';
+import {
+    setNodes,
+    setEdges,
+    addNode,
+    addEdge,
+    removeNode,
+    removeEdge,
+    setAddingEdge,
+    setDeleteMode,
+    updateTraversalVisualization,
+} from '../redux/graphSlice';
 import styles from './Graph.module.css';
 import Matrix from './Matrix';
 
@@ -14,13 +24,13 @@ const Graph: React.FC = () => {
     const addingEdge = useSelector((state: RootState) => state.graph.addingEdge);
     const isDirected = useSelector((state: RootState) => state.graph.isDirected);
     const traversalResult = useSelector((state: RootState) => state.graph.traversalResult);
+    const traversalOrder = useSelector((state: RootState) => state.graph.traversalOrder);
+    const currentTraversalIndex = useSelector((state: RootState) => state.graph.currentTraversalIndex);
+    const isVisualizing = useSelector((state: RootState) => state.graph.isVisualizing);
     const [edgeSource, setEdgeSource] = useState<string | null>(null);
     const [draggingNode, setDraggingNode] = useState<string | null>(null);
     const [position, setPosition] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
     const [tempEdge, setTempEdge] = useState<{ x1: number, y1: number, x2: number, y2: number } | null>(null);
-    const [isVisualizing, setIsVisualizing] = useState(false);
-    const [currentStep, setCurrentStep] = useState(0);
-    const [traversalType, setTraversalType] = useState<'DFS' | 'BFS' | null>(null);
 
     useEffect(() => {
         const handleMouseDown = (event: MouseEvent) => {
@@ -88,28 +98,13 @@ const Graph: React.FC = () => {
     }, [deleteMode, addingEdge, edgeSource, draggingNode, position, nodes, dispatch, isDirected, tempEdge]);
 
     useEffect(() => {
-        if (isVisualizing && traversalResult.length > 0) {
-            if (currentStep < traversalResult.length) {
-                const timer = setTimeout(() => {
-                    setCurrentStep(currentStep + 1);
-                }, 1000);
-                return () => clearTimeout(timer);
-            } else {
-                setIsVisualizing(false);
-            }
+        if (isVisualizing && currentTraversalIndex < traversalOrder.length - 1) {
+            const timer = setTimeout(() => {
+                dispatch(updateTraversalVisualization());
+            }, 1000); // Виконання кожну секунду
+            return () => clearTimeout(timer);
         }
-    }, [isVisualizing, currentStep, traversalResult]);
-
-    const startVisualization = (type: 'DFS' | 'BFS') => {
-        if (type === 'DFS') {
-            dispatch(dfsTraversal());
-        } else {
-            dispatch(bfsTraversal());
-        }
-        setTraversalType(type);
-        setIsVisualizing(true);
-        setCurrentStep(0);
-    };
+    }, [isVisualizing, currentTraversalIndex, traversalOrder, dispatch]);
 
     const handleLineClick = (event: React.MouseEvent<SVGLineElement, MouseEvent>) => {
         if (deleteMode) {
@@ -188,7 +183,7 @@ const Graph: React.FC = () => {
                                 cx={node.x}
                                 cy={node.y}
                                 r={10}
-                                fill={currentStep > 0 && traversalResult.slice(0, currentStep).includes(node.label) ? 'red' : 'black'}
+                                fill={currentTraversalIndex >= 0 && traversalOrder.slice(0, currentTraversalIndex + 1).includes(node.label) ? 'red' : 'black'}
                                 onMouseDown={() => setDraggingNode(node.id)}
                             />
                             <text x={node.x + 12} y={node.y + 4} fontSize="12" fill="black">{node.label}</text>
@@ -203,16 +198,19 @@ const Graph: React.FC = () => {
                 </div>
             )}
             <div className={styles.traversalResult}>
-                <h3>Результат пошуку ({traversalType === 'DFS' ? 'в глибину' : 'в ширину'}):</h3>
-                <p>{traversalResult.slice(0, currentStep).map((step, index) => `T${index + 1}: ${step}`).join(', ')}</p>
+                <h3>Результат {isVisualizing ? 'пошуку' : ''}:</h3>
+                <p>{traversalOrder.slice(0, currentTraversalIndex + 1).map((step, index) => `T${index + 1}: ${step}`).join(', ')}</p>
             </div>
-            <button onClick={() => startVisualization('DFS')}>DFS (пошук в глибину)</button>
-            <button onClick={() => startVisualization('BFS')}>BFS (пошук в ширину)</button>
         </div>
     );
 };
 
 export default Graph;
+
+
+
+
+
 
 
 

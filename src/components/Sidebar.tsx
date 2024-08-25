@@ -11,6 +11,7 @@ import {
     setIsDirected,
     dfsTraversal,
     bfsTraversal,
+    resetTraversalVisualization,
 } from '../redux/graphSlice';
 import styles from './Sidebar.module.css';
 
@@ -61,10 +62,12 @@ const Sidebar: React.FC = () => {
     };
 
     const handleDFS = () => {
+        dispatch(resetTraversalVisualization());
         dispatch(dfsTraversal());
     };
 
     const handleBFS = () => {
+        dispatch(resetTraversalVisualization());
         dispatch(bfsTraversal());
     };
 
@@ -80,7 +83,6 @@ const Sidebar: React.FC = () => {
                     className={styles.input}
                     min="0"
                 />
-
             </div>
             <button className={styles.button} onClick={handleAddNodes}>Додати вершини</button>
             <button className={styles.button} onClick={handleRemoveNode}>Видалити вершину</button>
@@ -95,13 +97,14 @@ const Sidebar: React.FC = () => {
                 />
                 Орієнтоване ребро
             </label>
-            <button className={styles.button} onClick={handleDFS}>DFS <br/>(пошук в глибину)</button>
-            <button className={styles.button} onClick={handleBFS}>BFS <br/> (пошук в ширину) </button>
+            <button className={styles.button} onClick={handleDFS}>DFS (пошук в глибину)</button>
+            <button className={styles.button} onClick={handleBFS}>BFS (пошук в ширину)</button>
         </div>
     );
 };
 
 export default Sidebar;
+
 
 
 
